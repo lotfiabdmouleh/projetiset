@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Implementation-Title: model
+Implementation-Version: 0.0.1-SNAPSHOT
+Built-By: admin
+Implementation-Vendor-Id: tn.iset
+Build-Jdk: 1.8.0_111
+Implementation-URL: https://projects.spring.io/spring-boot/#/spring-bo
+ ot-starter-parent/ProjetIset/model
+Created-By: Maven Integration for Eclipse
+
