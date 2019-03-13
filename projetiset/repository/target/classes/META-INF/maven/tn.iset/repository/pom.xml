@@ -5,5 +5,12 @@
     <artifactId>ProjetIset</artifactId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
-  <artifactId>reporting</artifactId>
+  <artifactId>repository</artifactId>
+  <dependencies>
+  	<dependency>
+  		<groupId>tn.iset</groupId>
+  		<artifactId>model</artifactId>
+  		<version>0.0.1-SNAPSHOT</version>
+  	</dependency>
+  </dependencies>
 </project>
