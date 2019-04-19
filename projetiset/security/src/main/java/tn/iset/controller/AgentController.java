@@ -2,8 +2,9 @@ package tn.iset.controller;
 
 
 import java.util.List;
-
 import java.util.Optional;
+
+import javax.persistence.PreUpdate;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,13 +37,16 @@ public class AgentController {
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	public List<Agent> getAll() {
+	 
 		return agentRepository.findAll();
 	}
     
 	@GetMapping("/{id}")
 	public Agent get(@PathVariable Long id) {
+		
 		return agentRepository.findById(id).get();
 	}
+	
 	  @PutMapping("/{id}")
 	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
 	       Optional<Agent> agentOptional = agentRepository.findById(id);
@@ -53,10 +57,10 @@ public class AgentController {
 		agent.setId(id);
 		
 		agentRepository.save(agent);
-
+		 
 		return ResponseEntity.noContent().build();
 	    }
-	    
+	  
 	    @PostMapping
 	    public void post(@RequestBody Agent agent) {
 	    		agentRepository.save(agent);
@@ -67,6 +71,7 @@ public class AgentController {
 	    public void delete(@PathVariable Long id) {
 	        agentRepository.deleteById(id);
 	    }
+	   
 
 	
 

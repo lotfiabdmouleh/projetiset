@@ -6,4 +6,13 @@
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <artifactId>reporting</artifactId>
+  <dependencies>
+  <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+ <!-- https://mvnrepository.com/artifact/net.sf.jasperreports/jasperreports -->
+<dependency>
+    <groupId>net.sf.jasperreports</groupId>
+    <artifactId>jasperreports</artifactId>
+    <version>6.1.0</version>
+</dependency> 
+  </dependencies>
 </project>

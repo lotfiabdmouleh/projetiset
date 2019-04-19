@@ -1,21 +1,29 @@
 package tn.iset.controller;
 
 
-import org.springframework.security.access.prepost.PreAuthorize;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RequestMapping("/rest/hello")
-@RestController
-public class HelloResource {
+import tn.iset.model.User;
+import tn.iset.repository.UserRepository;
 
-    @GetMapping("/all")
-    public String hello() {
-        return "Hello Youtube";
+@RequestMapping("/User")
+@RestController
+public class UserController {
+@Autowired
+private UserRepository userRepo;
+    @GetMapping()
+    public List<User> getAll() {
+       return userRepo.findAll();
     }
 
- 
+    public String  a() {
+   	 return "rrrr";
+    }
     @GetMapping("/secured/all")
     public String securedHello() {
         return "Secured Hello";
