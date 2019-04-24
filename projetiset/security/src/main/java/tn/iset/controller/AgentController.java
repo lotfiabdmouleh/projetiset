@@ -4,7 +4,7 @@ package tn.iset.controller;
 import java.util.List;
 import java.util.Optional;
 
-import javax.persistence.PreUpdate;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +27,7 @@ import tn.iset.repository.AgentRepository;
 @RequestMapping("/agent")
 
 public class AgentController {
+
 	@Autowired
 	private AgentRepository agentRepository;
 
@@ -37,7 +38,7 @@ public class AgentController {
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
 	public List<Agent> getAll() {
-	 
+		
 		return agentRepository.findAll();
 	}
     
@@ -62,7 +63,7 @@ public class AgentController {
 	    }
 	  
 	    @PostMapping
-	    public void post(@RequestBody Agent agent) {
+	    public void post(@Valid @RequestBody Agent agent) {
 	    		agentRepository.save(agent);
 
 	    }

@@ -2,35 +2,86 @@ package tn.iset.controller;
 
 
 import java.util.List;
+import java.util.Optional;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.Role;
 import tn.iset.model.User;
+import tn.iset.repository.RoleRepository;
 import tn.iset.repository.UserRepository;
 
-@RequestMapping("/User")
+@CrossOrigin("*")
+
 @RestController
+@RequestMapping("/users")
 public class UserController {
 @Autowired
 private UserRepository userRepo;
+@Autowired
+private RoleRepository rolerep;
     @GetMapping()
+    @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAll() {
+    	System.out.println("eeeeeeeeeeee");
        return userRepo.findAll();
     }
+    @GetMapping("/{id}")
+	public User get(@PathVariable Long id) {
+		
+		return userRepo.findById(id).get();
+	}
+	@PutMapping("/{id}")
+	@PreAuthorize("hasRole('ADMIN')")
+		public void AffecterRole(@PathVariable Long id, @RequestBody List<User> users){
+		
+			Role role=rolerep.findById(id).get();
+			System.out.println(role.getName());
+			for(int i=0;i<users.size();i++) {
+				System.out.println(users.get(i).getRoles().size());
+				users.get(i).getRoles().clear();
+				users.get(i).getRoles().add(role);
+				users.get(i).setId(users.get(i).getId());
+				userRepo.save(users.get(i));
+			}
+				
+	}
+	  /*@PutMapping("/{id}")
+	    public ResponseEntity<User> put(@PathVariable Long id, @RequestBody User user ) {
+	       Optional<User> agentOptional = userRepo.findById(id);
 
-    public String  a() {
-   	 return "rrrr";
-    }
-    @GetMapping("/secured/all")
-    public String securedHello() {
-        return "Secured Hello";
-    }
+		if (!agentOptional.isPresent())
+			return ResponseEntity.notFound().build();
 
-    @GetMapping("/secured/alternate")
-    public String alternate() {
-        return "alternate";
-    }
+		user.setId(id);
+		
+		userRepo.save(user);
+		 
+		return ResponseEntity.noContent().build();
+	    }
+	  
+	    @PostMapping
+	    public void post(@Valid @RequestBody User user) {
+	    	userRepo.save(user);
+
+	    }*/
+	    
+	    @DeleteMapping("/{id}")
+	    public void delete(@PathVariable Long id) {
+	    	userRepo.deleteById(id);
+	    }
+	   
 }

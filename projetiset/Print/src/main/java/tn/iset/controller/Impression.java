@@ -28,7 +28,7 @@ import net.sf.jasperreports.engine.xml.JRXmlLoader;
 public class Impression {
 		@Autowired
 	private DataSource datasource;
-		@RequestMapping(value="/ListeAgent")
+		@RequestMapping(value="/Liste")
 		 private HttpEntity<byte[]> Agent() throws JRException, IOException, ClassNotFoundException, SQLException{
 			InputStream input=this.getClass().getResourceAsStream("rep.jrxml");
 			JasperDesign design=JRXmlLoader.load(input);

@@ -9,6 +9,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.validation.Valid;
 
 
 
@@ -17,7 +18,9 @@ public class Agent extends Auditable<String> implements Serializable{
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
+	@Valid
 	private String nom;
+	@Valid
 	private String prenom;
 	
 	 
