@@ -11,8 +11,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.Valid;
 
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
-
+@Audited
 @Entity
 public class Agent extends Auditable<String> implements Serializable{
 	@Id

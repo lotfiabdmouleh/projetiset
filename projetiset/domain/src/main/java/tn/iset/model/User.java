@@ -18,6 +18,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.NaturalId;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
@@ -28,7 +30,9 @@ import org.hibernate.annotations.NaturalId;
             "email"
         })
 })
+@Audited
 public class User{
+	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,7 +54,7 @@ public class User{
     @NotBlank
     @Size(min=6, max = 100)
     private String password;
-
+@NotAudited
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", 
     	joinColumns = @JoinColumn(name = "user_id"), 

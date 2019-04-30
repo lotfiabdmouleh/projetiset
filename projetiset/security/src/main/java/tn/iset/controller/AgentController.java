@@ -4,8 +4,11 @@ package tn.iset.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
 import javax.validation.Valid;
 
+import org.hibernate.envers.AuditReader;
+import org.hibernate.envers.AuditReaderFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,9 +20,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.iset.model.Agent;
+import tn.iset.model.MyRevisionEntity;
 import tn.iset.repository.AgentRepository;
 @CrossOrigin("*")
 
@@ -30,6 +35,8 @@ public class AgentController {
 
 	@Autowired
 	private AgentRepository agentRepository;
+	@Autowired
+	private EntityManager entityManager;
 
 	public AgentController(AgentRepository agentRepository) {
 		super();
@@ -72,8 +79,17 @@ public class AgentController {
 	    public void delete(@PathVariable Long id) {
 	        agentRepository.deleteById(id);
 	    }
-	   
-
+	    
+@GetMapping("/history")
+@ResponseBody
+public List<MyRevisionEntity> gethistory(){
+	List<MyRevisionEntity> revisions = AuditReaderFactory.get(entityManager)
+            .createQuery()
+            .forRevisionsOfEntity(Agent.class, false, true)
+            .getResultList();
+	System.out.println(revisions);
+	return revisions;
+}
 	
 
 }
