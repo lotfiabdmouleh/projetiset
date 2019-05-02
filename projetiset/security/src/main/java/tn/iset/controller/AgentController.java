@@ -9,6 +9,8 @@ import javax.validation.Valid;
 
 import org.hibernate.envers.AuditReader;
 import org.hibernate.envers.AuditReaderFactory;
+import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.projection.AuditProjection;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -82,12 +84,16 @@ public class AgentController {
 	    
 @GetMapping("/history")
 @ResponseBody
-public List<MyRevisionEntity> gethistory(){
-	List<MyRevisionEntity> revisions = AuditReaderFactory.get(entityManager)
+public List gethistory(){
+	List revisions = AuditReaderFactory.get(entityManager)
             .createQuery()
             .forRevisionsOfEntity(Agent.class, false, true)
+            //.addProjection(AuditEntity.id())
+            .addProjection( AuditEntity.revisionProperty("timestamp"))
+            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+            .addProjection(AuditEntity.revisionType())
             .getResultList();
-	System.out.println(revisions);
+	
 	return revisions;
 }
 	
