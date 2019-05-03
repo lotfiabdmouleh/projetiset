@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Recharge;
+import tn.iset.reopsitory.tirage.RechargeRepository;
+
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/recharge")
 
-public class AgentController {
+public class RechargeController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private RechargeRepository rechargeRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public RechargeController ( RechargeRepository rechargeRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.rechargeRepository = rechargeRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Recharge> getAll() {
 		
-		return agentRepository.findAll();
+		return rechargeRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Recharge get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return rechargeRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Recharge> put(@PathVariable Long id, @RequestBody Recharge recharge) {
+	       Optional<Recharge> RechargeOptional = rechargeRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!RechargeOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		recharge.setId(id);
 		
-		agentRepository.save(agent);
+		rechargeRepository.save(recharge);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Recharge recharge) {
+	    	rechargeRepository.save(recharge);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	rechargeRepository.deleteById(id);
 	    }
 	    
-@GetMapping("/history")
-@ResponseBody
-public List gethistory(){
-	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
-	
-	return revisions;
-}
-	
-
-}
+		@GetMapping("/history")
+		@ResponseBody
+		public List gethistory(){
+			List revisions = AuditReaderFactory.get(entityManager)
+		           .createQuery()
+		           .forRevisionsOfEntity(Recharge.class, false, true)
+		           //.addProjection(AuditEntity.id())
+		           .addProjection( AuditEntity.revisionProperty("timestamp"))
+		           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+		           .addProjection(AuditEntity.revisionType())
+		           .getResultList();
+			
+			return revisions;
+		}}

@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,78 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
-@CrossOrigin("*")
+import tn.iset.model.tirage.Ancre;
+import tn.iset.reopsitory.tirage.AncreRepository;
+
+ @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/ancre")
 
-public class AgentController {
+ public class AncreController {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private AncreRepository ancrerepo;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public AncreController(AncreRepository ancrerepo) {
 		super();
-		this.agentRepository = agentRepository;
+		this.ancrerepo = ancrerepo;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Ancre> getAll() {
 		
-		return agentRepository.findAll();
+		return ancrerepo.findAll();
 	}
     
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Ancre get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return ancrerepo.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Ancre> put(@PathVariable Long id, @RequestBody Ancre ancre ) {
+	       Optional<Ancre> ancreOptional = ancrerepo.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!ancreOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		ancre.setId(id);
 		
-		agentRepository.save(agent);
+		ancrerepo.save(ancre);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Ancre ancre) {
+	    		ancrerepo.save(ancre);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	        ancrerepo.deleteById(id);
 	    }
-	    
-@GetMapping("/history")
-@ResponseBody
-public List gethistory(){
-	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
-	
-	return revisions;
-}
+			    
+		@GetMapping("/history")
+		@ResponseBody
+		public List gethistory(){
+			List revisions = AuditReaderFactory.get(entityManager)
+		            .createQuery()
+		            .forRevisionsOfEntity(Ancre.class, false, true)
+		            //.addProjection(AuditEntity.id())
+		            .addProjection( AuditEntity.revisionProperty("timestamp"))
+		            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+		            .addProjection(AuditEntity.revisionType())
+		            .getResultList();
+			
+			return revisions;
+		}
 	
 
 }
+

@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Enseignant;
+import tn.iset.reopsitory.tirage.EnseignantRepository;
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/enseignant")
 
-public class AgentController {
+public class EnseignentController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private EnseignantRepository enseignantRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public EnseignentController ( EnseignantRepository enseignantRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.enseignantRepository = enseignantRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Enseignant> getAll() {
 		
-		return agentRepository.findAll();
+		return enseignantRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Enseignant get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return enseignantRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Enseignant> put(@PathVariable Long id, @RequestBody Enseignant enseignant ) {
+	       Optional<Enseignant> EnseignantOptional = enseignantRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!EnseignantOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		enseignant.setId(id);
 		
-		agentRepository.save(agent);
+		enseignantRepository.save(enseignant);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Enseignant enseignant) {
+	    	enseignantRepository.save(enseignant);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	enseignantRepository.deleteById(id);
 	    }
 	    
 @GetMapping("/history")
 @ResponseBody
 public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
+           .createQuery()
+           .forRevisionsOfEntity(Enseignant.class, false, true)
+           //.addProjection(AuditEntity.id())
+           .addProjection( AuditEntity.revisionProperty("timestamp"))
+           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+           .addProjection(AuditEntity.revisionType())
+           .getResultList();
 	
 	return revisions;
-}
+}}
 	
-
-}

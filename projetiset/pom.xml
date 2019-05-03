@@ -29,7 +29,15 @@
   <dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency></dependencies>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.codehaus.sonar/sonar-maven-plugin -->
+<dependency>
+    <groupId>org.codehaus.sonar</groupId>
+    <artifactId>sonar-maven-plugin</artifactId>
+    <version>5.1</version>
+</dependency>
+		
+		</dependencies>
   <modules>
   	<module>model</module>
   	<module>repository</module>

@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Groupe;
+import tn.iset.reopsitory.tirage.GroupeRepository;
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/groupe")
 
-public class AgentController {
+public class GroupeController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private GroupeRepository groupeRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public GroupeController (  GroupeRepository groupeRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.groupeRepository = groupeRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Groupe> getAll() {
 		
-		return agentRepository.findAll();
+		return groupeRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Groupe get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return groupeRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Groupe> put(@PathVariable Long id, @RequestBody Groupe groupe) {
+	       Optional<Groupe> GroupeOptional = groupeRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!GroupeOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		groupe.setId(id);
 		
-		agentRepository.save(agent);
+		groupeRepository.save(groupe);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Groupe groupe) {
+	    	groupeRepository.save(groupe);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	groupeRepository.deleteById(id);
 	    }
 	    
 @GetMapping("/history")
 @ResponseBody
 public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
+           .createQuery()
+           .forRevisionsOfEntity(Groupe.class, false, true)
+           //.addProjection(AuditEntity.id())
+           .addProjection( AuditEntity.revisionProperty("timestamp"))
+           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+           .addProjection(AuditEntity.revisionType())
+           .getResultList();
 	
 	return revisions;
-}
+}}
 	
-
-}

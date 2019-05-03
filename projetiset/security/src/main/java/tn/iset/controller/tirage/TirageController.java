@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,77 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Recharge;
+import tn.iset.model.tirage.Tirage;
+import tn.iset.reopsitory.tirage.TirageRepository;
+
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/tirage")
 
-public class AgentController {
+public class TirageController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private TirageRepository tirageRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public TirageController (TirageRepository tirageRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.tirageRepository = tirageRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Tirage> getAll() {
 		
-		return agentRepository.findAll();
+		return tirageRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Tirage get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return tirageRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Recharge> put(@PathVariable Long id, @RequestBody Tirage tirage) {
+	       Optional<Tirage> TirageOptional = tirageRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!TirageOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		tirage.setId(id);
 		
-		agentRepository.save(agent);
+		tirageRepository.save(tirage);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Tirage tirage) {
+	    	tirageRepository.save(tirage);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	tirageRepository.deleteById(id);
 	    }
 	    
 @GetMapping("/history")
 @ResponseBody
 public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
+           .createQuery()
+           .forRevisionsOfEntity(Tirage.class, false, true)
+           //.addProjection(AuditEntity.id())
+           .addProjection( AuditEntity.revisionProperty("timestamp"))
+           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+           .addProjection(AuditEntity.revisionType())
+           .getResultList();
 	
 	return revisions;
-}
-	
-
-}
+}}

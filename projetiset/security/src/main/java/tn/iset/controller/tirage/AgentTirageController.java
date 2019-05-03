@@ -1,6 +1,4 @@
-package tn.iset.controller;
-
-
+package tn.iset.controller.tirage;
 
 
 import java.util.List;
@@ -25,40 +23,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.AgentTirage;
+import tn.iset.reopsitory.tirage.AgentTirageRepository;
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/agentTirage")
 
-public class AgentController {
+public class AgentTirageController {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private AgentTirageRepository agentRepository;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public AgentTirageController(AgentTirageRepository agentRepository) {
 		super();
 		this.agentRepository = agentRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<AgentTirage> getAll() {
 		
 		return agentRepository.findAll();
 	}
     
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public AgentTirage get(@PathVariable Long id) {
 		
 		return agentRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<AgentTirage> put(@PathVariable Long id, @RequestBody AgentTirage agent ) {
+	       Optional<AgentTirage> agentOptional = agentRepository.findById(id);
 
 		if (!agentOptional.isPresent())
 			return ResponseEntity.notFound().build();
@@ -71,7 +70,7 @@ public class AgentController {
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
+	    public void post(@Valid @RequestBody AgentTirage agent) {
 	    		agentRepository.save(agent);
 
 	    }
@@ -86,7 +85,7 @@ public class AgentController {
 public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
             .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
+            .forRevisionsOfEntity(AgentTirage.class, false, true)
             //.addProjection(AuditEntity.id())
             .addProjection( AuditEntity.revisionProperty("timestamp"))
             .addProjection(AuditEntity.revisionProperty("modifiedBy"))

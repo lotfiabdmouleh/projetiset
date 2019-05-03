@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Matiere;
+import tn.iset.reopsitory.tirage.MatiereRepository;
+
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/matiere")
 
-public class AgentController {
+public class MatiereController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private MatiereRepository matiereRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public MatiereController ( MatiereRepository matiereRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.matiereRepository = matiereRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Matiere> getAll() {
 		
-		return agentRepository.findAll();
+		return matiereRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Matiere get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return matiereRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Matiere> put(@PathVariable Long id, @RequestBody Matiere matiere) {
+	       Optional<Matiere> MatiereOptional = matiereRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!MatiereOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		matiere.setId(id);
 		
-		agentRepository.save(agent);
+		matiereRepository.save(matiere);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Matiere matiere) {
+	    	matiereRepository.save(matiere);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	matiereRepository.deleteById(id);
 	    }
 	    
-@GetMapping("/history")
-@ResponseBody
-public List gethistory(){
-	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
-	
-	return revisions;
-}
-	
-
-}
+		@GetMapping("/history")
+		@ResponseBody
+		public List gethistory(){
+			List revisions = AuditReaderFactory.get(entityManager)
+		           .createQuery()
+		           .forRevisionsOfEntity(Matiere.class, false, true)
+		           //.addProjection(AuditEntity.id())
+		           .addProjection( AuditEntity.revisionProperty("timestamp"))
+		           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+		           .addProjection(AuditEntity.revisionType())
+		           .getResultList();
+			
+			return revisions;
+		}}

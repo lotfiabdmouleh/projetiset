@@ -1,7 +1,4 @@
-package tn.iset.controller;
-
-
-
+package tn.iset.controller.tirage;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,76 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import tn.iset.model.Agent;
-import tn.iset.repository.AgentRepository;
+import tn.iset.model.tirage.Divers;
+import tn.iset.reopsitory.tirage.DiversRepository;
+
+
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/agent")
+@RequestMapping("/divers")
 
-public class AgentController {
+public class DiversController  {
 
 	@Autowired
-	private AgentRepository agentRepository;
+	private DiversRepository diversRepository ;
 	@Autowired
 	private EntityManager entityManager;
 
-	public AgentController(AgentRepository agentRepository) {
+	public DiversController ( DiversRepository diversRepository) {
 		super();
-		this.agentRepository = agentRepository;
+		this.diversRepository = diversRepository;
 	}
 	@GetMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public List<Agent> getAll() {
+	public List<Divers> getAll() {
 		
-		return agentRepository.findAll();
+		return diversRepository.findAll();
 	}
-    
+   
 	@GetMapping("/{id}")
-	public Agent get(@PathVariable Long id) {
+	public Divers get(@PathVariable Long id) {
 		
-		return agentRepository.findById(id).get();
+		return diversRepository.findById(id).get();
 	}
 	
 	  @PutMapping("/{id}")
-	    public ResponseEntity<Agent> put(@PathVariable Long id, @RequestBody Agent agent ) {
-	       Optional<Agent> agentOptional = agentRepository.findById(id);
+	    public ResponseEntity<Divers> put(@PathVariable Long id, @RequestBody Divers divers ) {
+	       Optional<Divers> diversOptional = diversRepository.findById(id);
 
-		if (!agentOptional.isPresent())
+		if (!diversOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		agent.setId(id);
+		divers.setId(id);
 		
-		agentRepository.save(agent);
+		diversRepository.save(divers);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Agent agent) {
-	    		agentRepository.save(agent);
+	    public void post(@Valid @RequestBody Divers divers) {
+	    	diversRepository.save(divers);
 
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	        agentRepository.deleteById(id);
+	    	diversRepository.deleteById(id);
 	    }
 	    
-@GetMapping("/history")
-@ResponseBody
-public List gethistory(){
-	List revisions = AuditReaderFactory.get(entityManager)
-            .createQuery()
-            .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
-            .addProjection( AuditEntity.revisionProperty("timestamp"))
-            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-            .addProjection(AuditEntity.revisionType())
-            .getResultList();
-	
-	return revisions;
-}
-	
-
-}
+		@GetMapping("/history")
+		@ResponseBody
+		public List gethistory(){
+			List revisions = AuditReaderFactory.get(entityManager)
+		           .createQuery()
+		           .forRevisionsOfEntity(Divers.class, false, true)
+		           //.addProjection(AuditEntity.id())
+		           .addProjection( AuditEntity.revisionProperty("timestamp"))
+		           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+		           .addProjection(AuditEntity.revisionType())
+		           .getResultList();
+			
+			return revisions;
+		}}
+			
