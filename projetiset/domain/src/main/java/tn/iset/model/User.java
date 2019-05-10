@@ -54,6 +54,9 @@ public class User{
     @NotBlank
     @Size(min=6, max = 100)
     private String password;
+	 private int tel;
+    
+    private String image;
 @NotAudited
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles", 
@@ -117,4 +120,20 @@ public class User{
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+		public int getTel() {
+		return tel;
+	}
+
+	public void setTel(int tel) {
+		this.tel = tel;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+    
 }

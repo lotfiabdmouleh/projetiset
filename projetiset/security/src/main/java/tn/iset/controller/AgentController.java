@@ -87,7 +87,6 @@ public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
             .createQuery()
             .forRevisionsOfEntity(Agent.class, false, true)
-            //.addProjection(AuditEntity.id())
             .addProjection( AuditEntity.revisionProperty("timestamp"))
             .addProjection(AuditEntity.revisionProperty("modifiedBy"))
             .addProjection(AuditEntity.revisionType())

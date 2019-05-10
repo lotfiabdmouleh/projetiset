@@ -36,7 +36,6 @@ private RoleRepository rolerep;
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAll() {
-    	System.out.println("eeeeeeeeeeee");
        return userRepo.findAll();
     }
     @GetMapping("/{id}")
@@ -49,7 +48,6 @@ private RoleRepository rolerep;
 		public void AffecterRole(@PathVariable Long id, @RequestBody List<User> users){
 		
 			Role role=rolerep.findById(id).get();
-			System.out.println(role.getName());
 			for(int i=0;i<users.size();i++) {
 				System.out.println(users.get(i).getRoles().size());
 				users.get(i).getRoles().clear();
