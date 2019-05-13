@@ -1,8 +1,10 @@
 package tn.iset.controller.tirage;
 
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.validation.Valid;
@@ -10,8 +12,10 @@ import javax.validation.Valid;
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,8 +27,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.message.request.SignUpForm;
+import tn.iset.message.response.ResponseMessage;
+import tn.iset.model.Role;
+import tn.iset.model.RoleName;
+import tn.iset.model.User;
 import tn.iset.model.tirage.AgentTirage;
+import tn.iset.model.tirage.Enseignant;
 import tn.iset.reopsitory.tirage.AgentTirageRepository;
+import tn.iset.repository.RoleRepository;
+import tn.iset.repository.UserRepository;
 
 @CrossOrigin("*")
 
@@ -37,6 +49,12 @@ public class AgentTirageController {
 	private AgentTirageRepository agentRepository;
 	@Autowired
 	private EntityManager entityManager;
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private PasswordEncoder encoder;
+	@Autowired
+	RoleRepository roleRepository;
 
 	public AgentTirageController(AgentTirageRepository agentRepository) {
 		super();
@@ -69,11 +87,41 @@ public class AgentTirageController {
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody AgentTirage agent) {
-	    		agentRepository.save(agent);
+	  @PostMapping
+	    public ResponseEntity<?> registerUser(@Valid @RequestBody SignUpForm signUpRequest) {
+			if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+				return new ResponseEntity<>(new ResponseMessage("Fail -> Username is already taken!"),
+						HttpStatus.BAD_REQUEST);
+			}
 
-	    }
+			if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+				return new ResponseEntity<>(new ResponseMessage("Fail -> Email is already in use!"),
+						HttpStatus.BAD_REQUEST);
+			}
+
+			// Creating user's account
+			User user = new AgentTirage();
+			user.setEmail(signUpRequest.getEmail());
+			user.setName(signUpRequest.getName());
+			user.setPassword(encoder.encode(signUpRequest.getPassword()));
+			user.setUsername(signUpRequest.getUsername());
+			user.setTel(signUpRequest.getTel());
+			
+			Set<String> strRoles = signUpRequest.getRole();
+			Set<Role> roles = new HashSet<>();
+
+			 
+					Role adminRole = roleRepository.findByName(RoleName.ROLE_AGENT)
+							.orElseThrow(() -> new RuntimeException("Fail! -> Cause: User Role not find."));
+					roles.add(adminRole);
+
+
+			user.setRoles(roles);
+			userRepository.save((AgentTirage) user);
+
+			return new ResponseEntity<>(new ResponseMessage("User registered successfully!"), HttpStatus.OK);
+		}
+
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {

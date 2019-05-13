@@ -17,7 +17,7 @@ public class Papier {
 
     @Basic
     private String format;
-
+private int nb_feuille;
     public Long getId() {
         return id;
     }
@@ -33,5 +33,13 @@ public class Papier {
     public void setFormat(String format) {
         this.format = format;
     }
+
+	public int getNb_feuille() {
+		return nb_feuille;
+	}
+
+	public void setNb_feuille(int nb_feuille) {
+		this.nb_feuille = nb_feuille;
+	}
 
 }

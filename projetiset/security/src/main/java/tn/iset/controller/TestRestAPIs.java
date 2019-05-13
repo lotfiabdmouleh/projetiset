@@ -26,4 +26,11 @@ public class TestRestAPIs {
 	public String adminAccess() {
 		return ">>> Admin Contents";
 	}
+	
+	@GetMapping("/api/test/agent")
+	@PreAuthorize("hasRole('ADMIN')")
+	public String agentAccess() {
+		return ">>> Agent Contents";
+	}
+
 }

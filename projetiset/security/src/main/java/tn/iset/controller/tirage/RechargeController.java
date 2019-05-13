@@ -22,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.Ancre;
+import tn.iset.model.tirage.Photocopieur;
 import tn.iset.model.tirage.Recharge;
+import tn.iset.reopsitory.tirage.AncreRepository;
+import tn.iset.reopsitory.tirage.PhotocopieurRepository;
 import tn.iset.reopsitory.tirage.RechargeRepository;
 
 
@@ -34,6 +38,11 @@ import tn.iset.reopsitory.tirage.RechargeRepository;
 
 public class RechargeController  {
 
+	@Autowired
+	private AncreRepository ancreRepository;
+
+	@Autowired
+	private PhotocopieurRepository photocopieurRepository;
 	@Autowired
 	private RechargeRepository rechargeRepository ;
 	@Autowired
@@ -56,13 +65,17 @@ public class RechargeController  {
 		return rechargeRepository.findById(id).get();
 	}
 	
-	  @PutMapping("/{id}")
-	    public ResponseEntity<Recharge> put(@PathVariable Long id, @RequestBody Recharge recharge) {
+	  @PutMapping("/{id}/{ph}/{an}")
+	    public ResponseEntity<Recharge> put(@PathVariable Long id,@PathVariable Long ph,@PathVariable Long an, @RequestBody Recharge recharge) {
 	       Optional<Recharge> RechargeOptional = rechargeRepository.findById(id);
 
 		if (!RechargeOptional.isPresent())
 			return ResponseEntity.notFound().build();
-
+		Ancre a = ancreRepository.findById(an).get();
+		
+    	Photocopieur f=photocopieurRepository.findById(ph).get();
+    	recharge.setAncre(a);
+    	recharge.setPhotocopieur(f);
 		recharge.setId(id);
 		
 		rechargeRepository.save(recharge);
@@ -70,9 +83,18 @@ public class RechargeController  {
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody Recharge recharge) {
-	    	rechargeRepository.save(recharge);
+	    @PostMapping("/{ph}/{an}")
+	    public void post(@Valid @PathVariable Long ph,@PathVariable Long an,  @RequestBody Recharge recharge) {
+	    
+			
+	    	Recharge r=new Recharge();
+	    	Ancre a = ancreRepository.findById(an).get();
+			a.addRecharge(r);
+	    	Photocopieur f=photocopieurRepository.findById(ph).get();
+	    	f.addRecharge(r);
+	    	r.setAncre(a);
+	    	r.setPhotocopieur(f);
+	    	rechargeRepository.save(r);
 
 	    }
 	    

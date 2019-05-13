@@ -23,7 +23,7 @@ public class SignUpForm {
     @NotBlank
     @Size(min = 6, max = 40)
     private String password;
- private int tel;
+   	private int tel;
    
     private String image;
 

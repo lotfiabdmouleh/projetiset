@@ -42,8 +42,7 @@
   	<module>model</module>
   	<module>repository</module>
   	<module>controller</module>
- 
-  	<module>Utils</module>
+   	<module>Utils</module>
   	<module>reporting</module>
   	<module>services</module>
   	<module>socle</module>
