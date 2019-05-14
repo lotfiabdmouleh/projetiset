@@ -1,27 +1,31 @@
 package tn.iset.model.tirage;
 
 import java.sql.Date;
+import java.util.List;
+
 import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import tn.iset.model.Auditable;
 
 /**
  * @author bahri
  */
 @Entity
-public class DemandeTirage {
+public class DemandeTirage extends Auditable<String>{
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Basic
-    private Date date_demande;
+  
 
-    @OneToOne(mappedBy = "demandeTirage")
-    private Enseignement enseignement;
+    @OneToMany
+    private List<Enseignement> enseignements;
 
     public Long getId() {
         return id;
@@ -31,20 +35,16 @@ public class DemandeTirage {
         this.id = id;
     }
 
-    public Date getDate_demande() {
-        return date_demande;
-    }
+  
 
-    public void setDate_demande(Date date_demande) {
-        this.date_demande = date_demande;
-    }
+	public List<Enseignement> getEnseignements() {
+		return enseignements;
+	}
 
-    public Enseignement getEnseignement() {
-        return enseignement;
-    }
+	public void setEnseignements(List<Enseignement> enseignements) {
+		this.enseignements = enseignements;
+	}
 
-    public void setEnseignement(Enseignement enseignement) {
-        this.enseignement = enseignement;
-    }
+   
 
 }

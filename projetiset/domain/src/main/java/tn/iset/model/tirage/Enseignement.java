@@ -5,18 +5,19 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
 
+import tn.iset.model.Auditable;
+
 /**
  * @author bahri
  */
 @Entity
-public class Enseignement {
+public class Enseignement extends Auditable<String> {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @OneToOne
-    private DemandeTirage demandeTirage;
+  
 
     @OneToOne
     private Matiere matiere;
@@ -36,14 +37,6 @@ public class Enseignement {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public DemandeTirage getDemandeTirage() {
-        return demandeTirage;
-    }
-
-    public void setDemandeTirage(DemandeTirage demandeTirage) {
-        this.demandeTirage = demandeTirage;
     }
 
     public Matiere getMatiere() {
