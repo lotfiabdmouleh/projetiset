@@ -9,6 +9,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,6 @@ import tn.iset.repository.RoleRepository;
 import tn.iset.repository.UserRepository;
 
 @CrossOrigin("*")
-
 @RestController
 @RequestMapping("/users")
 public class UserController {
@@ -33,6 +33,9 @@ public class UserController {
 private UserRepository userRepo;
 @Autowired
 private RoleRepository rolerep;
+
+@Autowired
+PasswordEncoder encoder;
     @GetMapping()
     @PreAuthorize("hasRole('ADMIN')")
     public List<User> getAll() {
@@ -57,7 +60,7 @@ private RoleRepository rolerep;
 			}
 				
 	}
-	  /*@PutMapping("/{id}")
+	  @PutMapping("put/{id}")
 	    public ResponseEntity<User> put(@PathVariable Long id, @RequestBody User user ) {
 	       Optional<User> agentOptional = userRepo.findById(id);
 
@@ -75,11 +78,26 @@ private RoleRepository rolerep;
 	    public void post(@Valid @RequestBody User user) {
 	    	userRepo.save(user);
 
-	    }*/
+	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
 	    	userRepo.deleteById(id);
+	    }
+	    @GetMapping("/byname/{name}")
+	    public Optional<User> getUserByName(@PathVariable String name){
+	    	return userRepo.findByUsername(name);
+	    }
+	    @PutMapping("password/{id}/{oldpass}")
+	    public void changePass(@PathVariable Long id,@PathVariable String oldpass,@RequestBody String passowrd){
+	    	User u=userRepo.findById(id).get();
+	    
+	    	if(encoder.matches(oldpass, u.getPassword())){
+	    		u.setId(id);
+	    		u.setPassword(encoder.encode(passowrd));
+	    		userRepo.save(u);
+	    	}
+	    	
 	    }
 	   
 }

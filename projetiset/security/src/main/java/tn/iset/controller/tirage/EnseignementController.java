@@ -22,15 +22,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.Departement;
+import tn.iset.model.tirage.Enseignant;
 import tn.iset.model.tirage.Enseignement;
+import tn.iset.model.tirage.Groupe;
+import tn.iset.model.tirage.Matiere;
+import tn.iset.reopsitory.tirage.DepartementRepository;
+import tn.iset.reopsitory.tirage.EnseignantRepository;
 import tn.iset.reopsitory.tirage.EnseignementRepository;
+import tn.iset.reopsitory.tirage.GroupeRepository;
+import tn.iset.reopsitory.tirage.MatiereRepository;
 
 
 
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/enseignement")
+@RequestMapping("/enseignemant")
 
 public class EnseignementController  {
 
@@ -39,6 +47,14 @@ public class EnseignementController  {
 	@Autowired
 	private EntityManager entityManager;
 
+	@Autowired
+	private DepartementRepository departementRepository;
+	@Autowired
+	private EnseignantRepository enseignantRepository;
+	@Autowired
+	private GroupeRepository groupeRepository;
+	@Autowired
+	private MatiereRepository matiereRepository;
 	public EnseignementController ( EnseignementRepository enseignementRepository) {
 		super();
 		this.enseignementRepository = enseignementRepository;
@@ -56,23 +72,39 @@ public class EnseignementController  {
 		return enseignementRepository.findById(id).get();
 	}
 	
-	  @PutMapping("/{id}")
-	    public ResponseEntity<Enseignement> put(@PathVariable Long id, @RequestBody Enseignement enseignement) {
+	  @PutMapping("/{id}/{dep}/{ens}/{grp}/{mat}")
+	    public ResponseEntity<Enseignement> put(@PathVariable Long id,  @PathVariable Long dep, @PathVariable Long ens,@PathVariable Long grp,@PathVariable Long mat,@RequestBody Enseignement e) {
 	       Optional<Enseignement> EnseignementOptional = enseignementRepository.findById(id);
 
 		if (!EnseignementOptional.isPresent())
 			return ResponseEntity.notFound().build();
-
-		enseignement.setId(id);
+		Departement d = departementRepository.findById(dep).get();
+    	Enseignant en = enseignantRepository.findById(ens).get();
+    	Matiere m=matiereRepository.findById(mat).get();
+    	Groupe g =groupeRepository.findById(grp).get();
+    	e.setDepartement(d);
+    	e.setEnseignant(en);
+    	e.setGroupe(g);
+    	e.setMatiere(m);
+		e.setId(id);
 		
-		enseignementRepository.save(enseignement);
+		enseignementRepository.save(e);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody Enseignement dept) {
-	    	enseignementRepository.save(dept);
+	    @PostMapping("/{dep}/{ens}/{grp}/{mat}")
+	    public void post(@Valid @PathVariable Long dep, @PathVariable Long ens,@PathVariable Long grp,@PathVariable Long mat,@RequestBody Enseignement enseignement) {
+	    	Enseignement e =new Enseignement();
+	    	Departement d = departementRepository.findById(dep).get();
+	    	Enseignant en = enseignantRepository.findById(ens).get();
+	    	Matiere m=matiereRepository.findById(mat).get();
+	    	Groupe g =groupeRepository.findById(grp).get();
+	    	e.setDepartement(d);
+	    	e.setEnseignant(en);
+	    	e.setGroupe(g);
+	    	e.setMatiere(m);
+	    	enseignementRepository.save(e);
 
 	    }
 	    

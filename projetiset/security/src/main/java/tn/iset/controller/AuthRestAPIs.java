@@ -110,4 +110,5 @@ public class AuthRestAPIs {
 
 		return new ResponseEntity<>(new ResponseMessage("User registered successfully!"), HttpStatus.OK);
 	}
+	
 }
