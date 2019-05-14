@@ -87,6 +87,7 @@ public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
             .createQuery()
             .forRevisionsOfEntity(Agent.class, false, true)
+            .addProjection(AuditEntity.id())
             .addProjection( AuditEntity.revisionProperty("timestamp"))
             .addProjection(AuditEntity.revisionProperty("modifiedBy"))
             .addProjection(AuditEntity.revisionType())
@@ -94,6 +95,13 @@ public List gethistory(){
 	
 	return revisions;
 }
-	
+	@GetMapping("/historyDetail/{id}")
+	@ResponseBody
+	public List getHistoryDetail(@PathVariable Long id){
+		
+	return	entityManager.createNativeQuery("select r.modified_by,r.revtstmp,a.nom,a.prenom from revinfo r,agent_aud a where a.rev=r.rev and a.id=?")
+		.setParameter(1, id)
+		.getResultList();
+	}
 
 }
