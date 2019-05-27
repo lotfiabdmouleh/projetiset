@@ -11,6 +11,7 @@ import javax.validation.Valid;
 
 import org.hibernate.envers.AuditReaderFactory;
 import org.hibernate.envers.query.AuditEntity;
+import org.hibernate.envers.query.criteria.AuditCriterion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,7 +45,7 @@ public class AgentController {
 		this.agentRepository = agentRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM') or hasRole('AGENT')")
 	public List<Agent> getAll() {
 		
 		return agentRepository.findAll();

@@ -42,7 +42,7 @@ import tn.iset.reopsitory.tirage.AncreRepository;
 		this.ancrerepo = ancrerepo;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
 	public List<Ancre> getAll() {
 		
 		return ancrerepo.findAll();

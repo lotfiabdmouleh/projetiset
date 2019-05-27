@@ -22,78 +22,72 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.AgentTirage;
 import tn.iset.model.tirage.DemandeTirage;
-import tn.iset.model.tirage.Departement;
-import tn.iset.reopsitory.tirage.DemandeTirageRepository;
-import tn.iset.reopsitory.tirage.DepartementRepository;
-
+import tn.iset.model.tirage.Semestre;
+import tn.iset.reopsitory.tirage.SemestreRepository;
 
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/departement")
+@RequestMapping("/semestre")
 
-public class DepartementController  {
+public class SemestreController {
 
 	@Autowired
-	private DepartementRepository departementRepository ;
+	private SemestreRepository semestreRepository;
 	@Autowired
 	private EntityManager entityManager;
 
-	public DepartementController ( DepartementRepository departementRepository) {
-		super();
-		this.departementRepository = departementRepository;
-	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
-	public List<Departement> getAll() {
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')")
+	public List<Semestre> getAll() {
 		
-		return departementRepository.findAll();
+		return semestreRepository.findAll();
 	}
-   
+    
 	@GetMapping("/{id}")
-	public Departement get(@PathVariable Long id) {
+	public Semestre get(@PathVariable Long id) {
 		
-		return departementRepository.findById(id).get();
+		return semestreRepository.findById(id).get();
 	}
-	
-	  @PutMapping("/{id}")
-	    public ResponseEntity<Departement> put(@PathVariable Long id, @RequestBody Departement dept ) {
-	       Optional<Departement> deptOptional = departementRepository.findById(id);
+	 @PutMapping("/{id}")
+	    public ResponseEntity<DemandeTirage> put(@PathVariable Long id, @RequestBody Semestre semestre ) {
+	       Optional<Semestre> semestreOptional = semestreRepository.findById(id);
 
-		if (!deptOptional.isPresent())
+		if (!semestreOptional.isPresent())
 			return ResponseEntity.notFound().build();
 
-		dept.setId(id);
-		
-		departementRepository.save(dept);
+		semestre.setId(id);
+		semestreRepository.save(semestre);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
 	    @PostMapping
-	    public void post(@Valid @RequestBody Departement dept) {
-	    	departementRepository.save(dept);
+	    public void post(@Valid @RequestBody Semestre semestre) {
+	    	semestreRepository.save(semestre);
 
 	    }
-	    
+
+	  
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	    	departementRepository.deleteById(id);
+	    	semestreRepository.deleteById(id);
 	    }
 	    
 @GetMapping("/history")
 @ResponseBody
 public List gethistory(){
 	List revisions = AuditReaderFactory.get(entityManager)
-           .createQuery()
-           .forRevisionsOfEntity(Departement.class, false, true)
-           //.addProjection(AuditEntity.id())
-           .addProjection( AuditEntity.revisionProperty("timestamp"))
-           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
-           .addProjection(AuditEntity.revisionType())
-           .getResultList();
+            .createQuery()
+            .forRevisionsOfEntity(Semestre.class, false, true)
+            //.addProjection(AuditEntity.id())
+            .addProjection( AuditEntity.revisionProperty("timestamp"))
+            .addProjection(AuditEntity.revisionProperty("modifiedBy"))
+            .addProjection(AuditEntity.revisionType())
+            .getResultList();
 	
 	return revisions;
-}}
-	
+}
+}

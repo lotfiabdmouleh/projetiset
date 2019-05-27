@@ -1,14 +1,12 @@
 package tn.iset.model.tirage;
 
-import java.sql.Date;
-import java.util.List;
-
-import javax.persistence.Basic;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
+import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import tn.iset.model.Auditable;
 
@@ -22,12 +20,29 @@ public class DemandeTirage extends Auditable<String>{
     @GeneratedValue
     private Long id;
 
-  
+  private String file;
 
-    @OneToMany
-    private List<Enseignement> enseignements;
+	@JsonIgnoreProperties("demandeTirages")
+	@ManyToOne
+	private Enseignement enseignement;
+	
+	private int nb_copie;
+	@Size(max = 500)
+	private String etat;
+	
+	 
 
-    public Long getId() {
+   
+
+	public String getEtat() {
+		return etat;
+	}
+
+	public void setEtat(String etat) {
+		this.etat = etat;
+	}
+
+	public Long getId() {
         return id;
     }
 
@@ -37,12 +52,31 @@ public class DemandeTirage extends Auditable<String>{
 
   
 
-	public List<Enseignement> getEnseignements() {
-		return enseignements;
+
+	public String getFile() {
+		return file;
 	}
 
-	public void setEnseignements(List<Enseignement> enseignements) {
-		this.enseignements = enseignements;
+	public void setFile(String file) {
+		this.file = file;
+	}
+
+	
+
+	public Enseignement getEnseignement() {
+		return enseignement;
+	}
+
+	public void setEnseignement(Enseignement enseignement) {
+		this.enseignement = enseignement;
+	}
+
+	public int getNb_copie() {
+		return nb_copie;
+	}
+
+	public void setNb_copie(int nb_copie) {
+		this.nb_copie = nb_copie;
 	}
 
    

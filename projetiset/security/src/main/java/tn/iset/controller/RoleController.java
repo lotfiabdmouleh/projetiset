@@ -34,7 +34,7 @@ public class RoleController {
 		this.roleRepository = roleRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')")
 	public List<Role> getAll() {
 		return roleRepository.findAll();
 	}

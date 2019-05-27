@@ -58,7 +58,7 @@ public class EnseignentController  {
 		this.enseignantRepository = enseignantRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
 	public List<Enseignant> getAll() {
 		
 		return enseignantRepository.findAll();

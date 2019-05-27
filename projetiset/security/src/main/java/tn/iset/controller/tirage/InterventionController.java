@@ -22,62 +22,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.Ancre;
+import tn.iset.model.tirage.Intervention;
 import tn.iset.model.tirage.Photocopieur;
+import tn.iset.model.tirage.Recharge;
+import tn.iset.reopsitory.tirage.AncreRepository;
+import tn.iset.reopsitory.tirage.InterventionRepository;
 import tn.iset.reopsitory.tirage.PhotocopieurRepository;
+import tn.iset.reopsitory.tirage.RechargeRepository;
 
 
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/photocopieur")
+@RequestMapping("/intervention")
 
-public class PhotocopieurController  {
+public class InterventionController  {
 
 	@Autowired
-	private PhotocopieurRepository photocopieurRepository ;
+	private InterventionRepository interventionRepository;
+
 	@Autowired
+	private PhotocopieurRepository photocopieurRepository;
+	@Autowired
+	
 	private EntityManager entityManager;
 
-	public PhotocopieurController (PhotocopieurRepository photocopieurRepository ) {
-		super();
-		this.photocopieurRepository = photocopieurRepository;
-	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
-	public List<Photocopieur> getAll() {
+	@PreAuthorize("hasRole('ADMIN')")
+	public List<Intervention> getAll() {
 		
-		return photocopieurRepository.findAll();
+		return interventionRepository.findAll();
 	}
    
 	@GetMapping("/{id}")
-	public Photocopieur get(@PathVariable Long id) {
+	public Intervention get(@PathVariable Long id) {
 		
-		return photocopieurRepository.findById(id).get();
+		return interventionRepository.findById(id).get();
 	}
 	
-	  @PutMapping("/{id}")
-	    public ResponseEntity<Photocopieur> put(@PathVariable Long id, @RequestBody Photocopieur photocopieur) {
-	       Optional<Photocopieur> PhotocopieurOptional = photocopieurRepository.findById(id);
+	  @PutMapping("/{id}/{ph}")
+	    public ResponseEntity<Recharge> put(@PathVariable Long id,@PathVariable Long ph, @RequestBody Intervention  intervention) {
+	       Optional<Intervention> InterventionOptional = interventionRepository.findById(id);
 
-		if (!PhotocopieurOptional.isPresent())
+		if (!InterventionOptional.isPresent())
 			return ResponseEntity.notFound().build();
-
-		photocopieur.setId(id);
+	
 		
-		photocopieurRepository.save(photocopieur);
+    	Photocopieur f=photocopieurRepository.findById(ph).get();
+    
+    	intervention.setPhotocopieur(f);
+    	intervention.setId(id);
+    	
+    	interventionRepository.save(intervention);
 		 
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody Photocopieur photocopieur) {
-	    	photocopieurRepository.save(photocopieur);
-
+	    @PostMapping("/{ph}")
+	    public void post(@Valid @PathVariable Long ph, @RequestBody Intervention intervention) {
+	    
+	    	Photocopieur f=photocopieurRepository.findById(ph).get();
+	    	f.addIntervention(intervention);
+	    	intervention.setPhotocopieur(f);
+	    		
+	    	interventionRepository.save(intervention);
 	    }
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
-	    	photocopieurRepository.deleteById(id);
+	    	interventionRepository.deleteById(id);
 	    }
 	    
 		@GetMapping("/history")
@@ -85,12 +99,14 @@ public class PhotocopieurController  {
 		public List gethistory(){
 			List revisions = AuditReaderFactory.get(entityManager)
 		           .createQuery()
-		           .forRevisionsOfEntity(Photocopieur.class, false, true)
+		           .forRevisionsOfEntity(Recharge.class, false, true)
 		           //.addProjection(AuditEntity.id())
 		           .addProjection( AuditEntity.revisionProperty("timestamp"))
 		           .addProjection(AuditEntity.revisionProperty("modifiedBy"))
 		           .addProjection(AuditEntity.revisionType())
+		      
 		           .getResultList();
 			
 			return revisions;
-		}}
+		}
+}

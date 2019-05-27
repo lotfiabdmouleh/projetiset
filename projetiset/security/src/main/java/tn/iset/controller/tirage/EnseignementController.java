@@ -1,6 +1,10 @@
 package tn.iset.controller.tirage;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
@@ -22,16 +26,20 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.Annee;
 import tn.iset.model.tirage.Departement;
 import tn.iset.model.tirage.Enseignant;
 import tn.iset.model.tirage.Enseignement;
 import tn.iset.model.tirage.Groupe;
 import tn.iset.model.tirage.Matiere;
+import tn.iset.model.tirage.Semestre;
+import tn.iset.reopsitory.tirage.AnneeRepository;
 import tn.iset.reopsitory.tirage.DepartementRepository;
 import tn.iset.reopsitory.tirage.EnseignantRepository;
 import tn.iset.reopsitory.tirage.EnseignementRepository;
 import tn.iset.reopsitory.tirage.GroupeRepository;
 import tn.iset.reopsitory.tirage.MatiereRepository;
+import tn.iset.reopsitory.tirage.SemestreRepository;
 
 
 
@@ -55,12 +63,19 @@ public class EnseignementController  {
 	private GroupeRepository groupeRepository;
 	@Autowired
 	private MatiereRepository matiereRepository;
+	
+	@Autowired
+	private SemestreRepository semestreRepository;
+	
+	@Autowired
+	private AnneeRepository anneeRepository;
 	public EnseignementController ( EnseignementRepository enseignementRepository) {
 		super();
 		this.enseignementRepository = enseignementRepository;
 	}
+	
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
 	public List<Enseignement> getAll() {
 		
 		return enseignementRepository.findAll();
@@ -72,16 +87,22 @@ public class EnseignementController  {
 		return enseignementRepository.findById(id).get();
 	}
 	
-	  @PutMapping("/{id}/{dep}/{ens}/{grp}/{mat}")
-	    public ResponseEntity<Enseignement> put(@PathVariable Long id,  @PathVariable Long dep, @PathVariable Long ens,@PathVariable Long grp,@PathVariable Long mat,@RequestBody Enseignement e) {
+	  @PutMapping("/{id}/{dep}/{ens}/{grp}/{mat}/{sem}/{ann}")
+	    public ResponseEntity<Enseignement> put(@PathVariable Long id,  @PathVariable Long dep, @PathVariable Long ens,
+	    		@PathVariable Long grp,@PathVariable Long mat,@PathVariable Long sem,@PathVariable Long ann,
+	    		@RequestBody Enseignement e) {
 	       Optional<Enseignement> EnseignementOptional = enseignementRepository.findById(id);
 
 		if (!EnseignementOptional.isPresent())
 			return ResponseEntity.notFound().build();
+		Semestre s=semestreRepository.findById(sem).get();
+		Annee a=anneeRepository.findById(ann).get();
 		Departement d = departementRepository.findById(dep).get();
     	Enseignant en = enseignantRepository.findById(ens).get();
     	Matiere m=matiereRepository.findById(mat).get();
     	Groupe g =groupeRepository.findById(grp).get();
+    	e.setSemestre(s);
+    	e.setAnnee(a);
     	e.setDepartement(d);
     	e.setEnseignant(en);
     	e.setGroupe(g);
@@ -93,17 +114,23 @@ public class EnseignementController  {
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping("/{dep}/{ens}/{grp}/{mat}")
-	    public void post(@Valid @PathVariable Long dep, @PathVariable Long ens,@PathVariable Long grp,@PathVariable Long mat,@RequestBody Enseignement enseignement) {
+	    @PostMapping("/{dep}/{ens}/{grp}/{mat}/{sem}/{ann}")
+	    public void post(@Valid @PathVariable Long dep, @PathVariable Long ens,@PathVariable Long grp,
+	    		@PathVariable Long mat,@PathVariable Long sem,@PathVariable Long ann,
+	    		@RequestBody Enseignement enseignement) {
 	    	Enseignement e =new Enseignement();
 	    	Departement d = departementRepository.findById(dep).get();
 	    	Enseignant en = enseignantRepository.findById(ens).get();
 	    	Matiere m=matiereRepository.findById(mat).get();
 	    	Groupe g =groupeRepository.findById(grp).get();
+	    	Semestre s=semestreRepository.findById(sem).get();
+			Annee a=anneeRepository.findById(ann).get();
 	    	e.setDepartement(d);
 	    	e.setEnseignant(en);
 	    	e.setGroupe(g);
 	    	e.setMatiere(m);
+	    	e.setSemestre(s);
+	    	e.setAnnee(a);
 	    	enseignementRepository.save(e);
 
 	    }
@@ -112,6 +139,12 @@ public class EnseignementController  {
 	    public void delete(@PathVariable Long id) {
 	    	enseignementRepository.deleteById(id);
 	    }
+	    
+@GetMapping("/user/{username}")
+@ResponseBody
+public List getUser(@Valid @PathVariable String username) {
+	return enseignementRepository.getEns(username);
+}
 	    
 @GetMapping("/history")
 @ResponseBody

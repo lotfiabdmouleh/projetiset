@@ -3,34 +3,33 @@ package tn.iset.model.tirage;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
-import javax.persistence.Basic;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import tn.iset.model.Auditable;
 
 /**
  * @author bahri
  */
 @Entity
-public class Tirage {
+public class Tirage extends Auditable<String> {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Basic
-    private Date date_tirage;
 
     @OneToOne
     private Photocopieur photocopieur;
 
-    @OneToOne
-    private AgentTirage agentTirage;
 
-    @OneToMany
-    private List<Papier> papiers;
+    @ManyToOne
+    private Papier papiers;
 
     @OneToMany
     private List<DemandeTirage> demandeTirages;
@@ -43,14 +42,7 @@ public class Tirage {
         this.id = id;
     }
 
-    public Date getDate_tirage() {
-        return date_tirage;
-    }
-
-    public void setDate_tirage(Date date_tirage) {
-        this.date_tirage = date_tirage;
-    }
-
+   
     public Photocopieur getPhotocopieur() {
         return photocopieur;
     }
@@ -59,34 +51,17 @@ public class Tirage {
         this.photocopieur = photocopieur;
     }
 
-    public AgentTirage getAgentTirage() {
-        return agentTirage;
-    }
+   
 
-    public void setAgentTirage(AgentTirage agentTirage) {
-        this.agentTirage = agentTirage;
-    }
+    public Papier getPapiers() {
+		return papiers;
+	}
 
-    public List<Papier> getPapiers() {
-        if (papiers == null) {
-            papiers = new ArrayList<>();
-        }
-        return papiers;
-    }
+	public void setPapiers(Papier papiers) {
+		this.papiers = papiers;
+	}
 
-    public void setPapiers(List<Papier> papiers) {
-        this.papiers = papiers;
-    }
-
-    public void addPapier(Papier papier) {
-        getPapiers().add(papier);
-    }
-
-    public void removePapier(Papier papier) {
-        getPapiers().remove(papier);
-    }
-
-    public List<DemandeTirage> getDemandeTirages() {
+	public List<DemandeTirage> getDemandeTirages() {
         if (demandeTirages == null) {
             demandeTirages = new ArrayList<>();
         }

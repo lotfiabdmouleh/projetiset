@@ -22,8 +22,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import tn.iset.model.tirage.AgentTirage;
+import tn.iset.model.tirage.DemandeTirage;
+import tn.iset.model.tirage.Papier;
+import tn.iset.model.tirage.Photocopieur;
 import tn.iset.model.tirage.Recharge;
 import tn.iset.model.tirage.Tirage;
+import tn.iset.reopsitory.tirage.AgentTirageRepository;
+import tn.iset.reopsitory.tirage.DemandeTirageRepository;
+import tn.iset.reopsitory.tirage.PapierRepository;
+import tn.iset.reopsitory.tirage.PhotocopieurRepository;
 import tn.iset.reopsitory.tirage.TirageRepository;
 
 
@@ -37,6 +45,18 @@ public class TirageController  {
 
 	@Autowired
 	private TirageRepository tirageRepository ;
+
+	@Autowired
+	private PhotocopieurRepository photocopieurRepository ;
+
+	@Autowired
+	private DemandeTirageRepository demandeTirageRepository ;
+	@Autowired
+	private PapierRepository papierRepository ;
+
+	@Autowired
+	private AgentTirageRepository agentTirageRepository ;
+	
 	@Autowired
 	private EntityManager entityManager;
 
@@ -45,7 +65,7 @@ public class TirageController  {
 		this.tirageRepository = tirageRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
 	public List<Tirage> getAll() {
 		
 		return tirageRepository.findAll();
@@ -71,16 +91,56 @@ public class TirageController  {
 		return ResponseEntity.noContent().build();
 	    }
 	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody Tirage tirage) {
+	    @PostMapping("/{agent}/{papier}/{ph}")
+	    public void post(@Valid @PathVariable Long agent,@PathVariable Long papier,@PathVariable Long ph,
+	    		@RequestBody DemandeTirage demandeTirage) {
+	    	Tirage tirage =new Tirage();
+	    	Photocopieur p=photocopieurRepository.findById(ph).get();
+	    	Papier pap=papierRepository.findById(papier).get();
+	    	pap.setNb_feuille(pap.getNb_feuille()-demandeTirage.getNb_copie());
+	    	tirage.setPapiers(pap);
+	    	tirage.setPhotocopieur(p);
+	    	demandeTirage.setEtat("Document imprimé");  
+	    	
+	    	tirage.getDemandeTirages().add(demandeTirage);
+	    
+	    	demandeTirage.setId(demandeTirage.getId());
+	    	demandeTirageRepository.save(demandeTirage);
+	    	AgentTirage agentTirage=agentTirageRepository.findById(agent).get();
+	    	agentTirage.addTirage(tirage);
 	    	tirageRepository.save(tirage);
 
 	    }
+	    @PostMapping("/file/{id}")
+	    public void post(@Valid @PathVariable Long id,	@RequestBody String file) {
+	    	DemandeTirage demandeTirage=demandeTirageRepository.findById(id).get();
+	    	demandeTirage.setEtat(file);  
+	    	
+	    	demandeTirage.setId(demandeTirage.getId());
+	    	demandeTirageRepository.save(demandeTirage);
+	    
+
+	    }
+	   
+	   
+	    
+	    
+	    
+	    @GetMapping("/demande")
+	    @ResponseBody
+	    public List getdemande() {
+	    	return tirageRepository.getdem("en attente");
+	    }
+	    
+	    
+	    
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
 	    	tirageRepository.deleteById(id);
 	    }
+	    
+	    
 	    
 @GetMapping("/history")
 @ResponseBody

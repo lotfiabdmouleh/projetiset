@@ -43,7 +43,7 @@ public class PapierController  {
 		this.papierRepository = papierRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
 	public List<Papier> getAll() {
 		
 		return papierRepository.findAll();

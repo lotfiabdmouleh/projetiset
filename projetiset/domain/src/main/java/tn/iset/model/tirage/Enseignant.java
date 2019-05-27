@@ -7,6 +7,6 @@ import tn.iset.model.User;
  * @author bahri
  */
 @Entity
-public class Enseignant extends User {
-
-}
+public class Enseignant extends User  {
+	
+	}

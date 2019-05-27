@@ -61,7 +61,7 @@ public class AgentTirageController {
 		this.agentRepository = agentRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
 	public List<AgentTirage> getAll() {
 		
 		return agentRepository.findAll();

@@ -23,13 +23,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import tn.iset.model.tirage.DemandeTirage;
+import tn.iset.model.tirage.Enseignement;
 import tn.iset.reopsitory.tirage.DemandeTirageRepository;
+import tn.iset.reopsitory.tirage.EnseignementRepository;
 
 
 @CrossOrigin("*")
 
 @RestController
-@RequestMapping("/demandetirage")
+@RequestMapping("/demandeTirage")
 
 public class DemandeTirageController  {
 
@@ -38,12 +40,14 @@ public class DemandeTirageController  {
 	@Autowired
 	private EntityManager entityManager;
 
+	@Autowired
+	private EnseignementRepository enseignementRepository;
 	public DemandeTirageController (DemandeTirageRepository demandeTirageRepository) {
 		super();
 		this.demandeTirageRepository = demandeTirageRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
 	public List<DemandeTirage> getAll() {
 		
 		return demandeTirageRepository.findAll();
@@ -55,30 +59,33 @@ public class DemandeTirageController  {
 		return demandeTirageRepository.findById(id).get();
 	}
 	
-	  @PutMapping("/{id}")
-	    public ResponseEntity<DemandeTirage> put(@PathVariable Long id, @RequestBody DemandeTirage demandeTirage ) {
-	       Optional<DemandeTirage> demandetirageOptional = demandeTirageRepository.findById(id);
-
-		if (!demandetirageOptional.isPresent())
-			return ResponseEntity.notFound().build();
-
-		demandeTirage.setId(id);
-		
-		demandeTirageRepository.save(demandeTirage);
-		 
-		return ResponseEntity.noContent().build();
-	    }
-	  
-	    @PostMapping
-	    public void post(@Valid @RequestBody DemandeTirage demandeTirage) {
+	    @PostMapping("/{file}")
+	    public void post(@Valid @PathVariable String file,@RequestBody Enseignement enseignement) {
+	    	DemandeTirage demandeTirage=new DemandeTirage();
+	    	demandeTirage.setNb_copie(enseignement.getGroupe().getNb_etd());
+	    	demandeTirage.setFile(file);
+	    	demandeTirage.setEnseignement(enseignement);
+	    	demandeTirage.setEtat("Document en attente");
 	    	demandeTirageRepository.save(demandeTirage);
+	    	enseignement.addDemandeTirages(demandeTirage);
+	    	enseignement.setId(enseignement.getId());
+	    	enseignementRepository.save(enseignement);
 
 	    }
+	    
+	    
+	    @GetMapping("/user/{user}")
+	    @ResponseBody
+	    public List getdemande(@PathVariable String user) {
+	    	return demandeTirageRepository.getEns(user);
+	    }
+	    
 	    
 	    @DeleteMapping("/{id}")
 	    public void delete(@PathVariable Long id) {
 	    	demandeTirageRepository.deleteById(id);
 	    }
+	  
 	    
 @GetMapping("/history")
 @ResponseBody

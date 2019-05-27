@@ -43,7 +43,7 @@ public class GroupeController  {
 		this.groupeRepository = groupeRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
 	public List<Groupe> getAll() {
 		
 		return groupeRepository.findAll();

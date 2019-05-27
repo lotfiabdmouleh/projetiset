@@ -44,7 +44,7 @@ public class MatiereController  {
 		this.matiereRepository = matiereRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')or hasRole('AGENT')")
 	public List<Matiere> getAll() {
 		
 		return matiereRepository.findAll();

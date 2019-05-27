@@ -53,7 +53,7 @@ public class RechargeController  {
 		this.rechargeRepository = rechargeRepository;
 	}
 	@GetMapping
-	@PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('AGENT')")
 	public List<Recharge> getAll() {
 		
 		return rechargeRepository.findAll();

@@ -37,7 +37,7 @@ private RoleRepository rolerep;
 @Autowired
 PasswordEncoder encoder;
     @GetMapping()
-    @PreAuthorize("hasRole('ADMIN')")
+	@PreAuthorize("hasRole('ADMIN')or hasRole('PM')")
     public List<User> getAll() {
        return userRepo.findAll();
     }
